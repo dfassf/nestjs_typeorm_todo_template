@@ -2,8 +2,10 @@
 
 ## Description
 
-This is a basic backend server template for a to-do app using NestJS and TypeORM 0.3.x. 
+This is a basic backend server template for a to-do app using NestJS and TypeORM 0.3.x and MySQL. 
+
 The app supports basic CRUD for two entities - `UserEntity` and `TaskEntity`. 
+
 It uses CustomRepository and the relevant files are `src/typeorm-ex.decorator.ts` and `src/typeorm-ex.module.ts`.
 
 I hope this helps you build the server more quickly at first.
