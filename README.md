@@ -8,6 +8,6 @@ I hope this helps you build the server more quickly at first.
 
 ## Installation
 1. Run `npm i` command
-2. Modify the file name of `.env.sample` to `.env` and set up the values in it
+2. Modify the file name of `.env.example` to `.env` and set up the values in it
 3. Run `npm start` command, or `npm start:dev` command for dev mode on
 4. Take a look at files and modify entities / add features / whatever you want.
