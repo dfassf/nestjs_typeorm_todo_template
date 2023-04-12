@@ -3,19 +3,18 @@ import { TaskEntity } from 'src/task/entity/task';
 
 @Entity({name: 'user'})
 export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column({ name: 'user_name', type: 'varchar', length: 50, nullable: false, unique: true})
+  userName: string;
 
-    @Column({ name: 'user_name', type: 'varchar', length: 50, nullable: false, unique: true})
-    userName: string;
+  @CreateDateColumn({ name: 'created_at'})
+  createdAt: Date;
+  
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-    @CreateDateColumn({ name: 'created_at'})
-    createdAt: Date;
-    
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
-
-    @OneToMany(() => TaskEntity, taskEntity => taskEntity.userId)
-    tasks: TaskEntity[];
+  @OneToMany(() => TaskEntity, taskEntity => taskEntity.userId)
+  tasks: TaskEntity[];
 }

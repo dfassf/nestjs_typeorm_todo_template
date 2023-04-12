@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsDate, IsDateString, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsString } from 'class-validator';
 import { TaskEntity } from '../entity/task';
 
 export class GetTasksResponseDto {

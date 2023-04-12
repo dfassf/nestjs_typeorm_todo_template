@@ -6,28 +6,27 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AddUserResponseDto } from './dto/add.user.res.dto';
-import { UserEntity } from './entity/user';
+import { CreateUserResponseDto } from './dto/create.user.res.dto';
 import { GetUserResponseDto } from './dto/get.user.res.dto';
 import { UpdateUserRequestDto } from './dto/update.user.req.dto';
 import { UpdateUserResponseDto } from './dto/update.user.res.dto';
 import { DeleteUserResponseDto } from './dto/delete.user.res.dto';
+import { CreateUserRequestDto } from './dto/create.user.req.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('addUser')
-  addUser(@Query('userName') userName: string): Promise<AddUserResponseDto>{
-    return this.userService.addUser(userName);
+  @Post('createUser')
+  createUser(@Body() createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponseDto>{
+    return this.userService.createUser(createUserRequestDto);
   }
 
-  @Get('getUser/:userId')
-  getUser(@Param('userId') userId: number): Promise<GetUserResponseDto>{
-    return this.userService.getUser(userId);
+  @Get('getUserById/:userId')
+  getUserById(@Param('userId') userId: number): Promise<GetUserResponseDto>{
+    return this.userService.getUserById(userId);
   }
 
   @Patch('updateUser/:userId')
@@ -35,7 +34,6 @@ export class UserController {
     @Param('userId') userId: number,
     @Body() updateUserRequestDto: UpdateUserRequestDto
     ): Promise<UpdateUserResponseDto>{
-      console.log(updateUserRequestDto)
     return this.userService.updateUser(userId, updateUserRequestDto);
   }
 

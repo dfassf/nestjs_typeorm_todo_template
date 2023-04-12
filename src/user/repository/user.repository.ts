@@ -1,10 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomRepository } from 'src/typeorm-ex.decorator';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { UserEntity } from '../entity/user';
-import { AddUserResponseDto } from '../dto/add.user.res.dto';
+import { CreateUserResponseDto } from '../dto/create.user.res.dto';
 import { GetUserResponseDto } from '../dto/get.user.res.dto';
-import { UpdateUserRequestDto } from '../dto/update.user.req.dto';
 import { UpdateUserResponseDto } from '../dto/update.user.res.dto';
 import { DeleteUserResponseDto } from '../dto/delete.user.res.dto';
 
@@ -17,17 +16,19 @@ export class UserRepository extends Repository<UserEntity>{
       super(repository.target, repository.manager, repository.queryRunner);
   }
 
-  async addUser(userName: string): Promise<AddUserResponseDto> {
-    const response = new AddUserResponseDto();
+  async createUser(userEntity: UserEntity): Promise<CreateUserResponseDto> {
+    const response = new CreateUserResponseDto();
     response.result = false;
     response.code = '';
     response.message = '';
     try {
-      const userEntity: UserEntity = new UserEntity();
-      userEntity.userName = userName;
+      const result:InsertResult = 
+      await this.createQueryBuilder('u')
+      .insert()
+      .into(UserEntity)
+      .values(userEntity)
+      .execute();
 
-      const result: UserEntity = await this.save(userEntity);
-      console.log(result)
       if(result) {
         response.result = true;
         return response;
@@ -45,13 +46,16 @@ export class UserRepository extends Repository<UserEntity>{
     }
   }
 
-  async getUser(userId: number): Promise<GetUserResponseDto> {
+  async getUserById(userId: number): Promise<GetUserResponseDto> {
     const response = new GetUserResponseDto();
     response.result = false;
     response.code = '';
     response.message = '';
     try {
-      const result: UserEntity = await this.findOneBy({id: userId});
+      const result:UserEntity = 
+      await this.createQueryBuilder()
+      .where('id = :userId', {userId})
+      .getOne();
 
       console.log(result)
       if(result) {
@@ -72,16 +76,18 @@ export class UserRepository extends Repository<UserEntity>{
     }
   }
 
-  async updateUser(userId: number, updateUserRequestDto: UpdateUserRequestDto): Promise<UpdateUserResponseDto> {
+  async updateUser(userId: number, userEntity: UserEntity): Promise<UpdateUserResponseDto> {
     const response = new UpdateUserResponseDto();
     response.result = false;
     response.code = '';
     response.message = '';
     try {
-      const userEntity: UserEntity = new UserEntity();
-      userEntity.userName = updateUserRequestDto.userName;
-
-      const result: UpdateResult = await this.update({id: userId}, userEntity);
+      const result: UpdateResult = 
+      await this.createQueryBuilder()
+      .update(UserEntity)
+      .set(userEntity)
+      .where('id = :userId', {userId})
+      .execute();
 
       if(result) {
         response.result = true;
@@ -106,7 +112,12 @@ export class UserRepository extends Repository<UserEntity>{
     response.code = '';
     response.message = '';
     try {
-      const result: DeleteResult = await this.delete({id: userId});
+      const result: DeleteResult = 
+      await this.createQueryBuilder()
+      .delete()
+      .from(UserEntity)
+      .where('id = :userId', {userId})
+      .execute();
 
       if(result) {
         response.result = true;

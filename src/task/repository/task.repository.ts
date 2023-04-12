@@ -1,12 +1,9 @@
 import { CustomRepository } from 'src/typeorm-ex.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { TaskEntity } from '../entity/task';
-import { AddTaskRequestDto } from '../dto/add.task.req.dto';
 import { AddTaskResponseDto } from '../dto/add.task.res.dto';
-import { UserEntity } from 'src/user/entity/user';
 import { GetTasksResponseDto } from '../dto/get.tasks.res.dto';
-import { UpdateTaskRequestDto } from '../dto/update.task.req.dto';
 import { UpdateTaskResponseDto } from '../dto/update.task.res.dto';
 import { DeleteTaskResponseDto } from '../dto/delete.task.res.dto';
 
@@ -19,19 +16,16 @@ export class TaskRepository extends Repository<TaskEntity>{
       super(repository.target, repository.manager, repository.queryRunner);
   }
 
-  async addTask(userEntity: UserEntity, addTaskRequestDto: AddTaskRequestDto): Promise<AddTaskResponseDto> {
+  async addTask(taskEntity: TaskEntity): Promise<AddTaskResponseDto> {
     const response = new AddTaskResponseDto();
     try {
-      const taskEntity: TaskEntity = new TaskEntity();
-
-      taskEntity.userId = userEntity;
-      taskEntity.taskName = addTaskRequestDto.taskName;
-      taskEntity.date = new Date(addTaskRequestDto.date);
-      if(addTaskRequestDto.description) {
-        taskEntity.description = addTaskRequestDto.description;
-      }
-
-      const result: TaskEntity = await this.save(taskEntity);
+      const result: InsertResult = 
+      await this.createQueryBuilder()
+      .insert()
+      .into(TaskEntity)
+      .values(taskEntity)
+      .execute();
+      console.log(result)
       if(result) {
         response.result = true;
         return response;
@@ -56,10 +50,13 @@ export class TaskRepository extends Repository<TaskEntity>{
     response.code = '';
     response.message = '';
     try {
+      const result: TaskEntity[] = 
+      await this.createQueryBuilder()
+      .where('user_id = :userId', {userId})
+      .getMany();
 
-      const result: TaskEntity[] = await this.find({where: {userId: {id: userId}}});
-      console.log(result)
       if(result) {
+        response.result = true;
         response.data = result;
         return response;
       }
@@ -74,16 +71,15 @@ export class TaskRepository extends Repository<TaskEntity>{
     }
   }
 
-  async updateTask(taskId: number, userEntity: UserEntity, updateTaskRequestDto: UpdateTaskRequestDto): Promise<UpdateTaskResponseDto> {
+  async updateTask(taskId: number, taskEntity: TaskEntity): Promise<UpdateTaskResponseDto> {
     const response = new UpdateTaskResponseDto();
     try {
-      const taskEntity: TaskEntity = new TaskEntity();
-      taskEntity.taskName = updateTaskRequestDto.taskName;
-      taskEntity.date = new Date(updateTaskRequestDto.date);
-      taskEntity.description = updateTaskRequestDto.description;
-
-      const result: UpdateResult = await this.update({id: taskId}, taskEntity);
-
+      const result: UpdateResult = 
+      await this.createQueryBuilder()
+      .update(TaskEntity)
+      .set(taskEntity)
+      .where('id = :taskId', {taskId})
+      .execute();
 
       if(result) {
         response.result = true;
@@ -105,7 +101,11 @@ export class TaskRepository extends Repository<TaskEntity>{
   async deleteTask(taskId: number): Promise<DeleteTaskResponseDto> {
     const response = new DeleteTaskResponseDto();
     try {
-      const result: DeleteResult = await this.delete({id: taskId});
+      const result: DeleteResult = 
+      await this.createQueryBuilder()
+      .delete()
+      .where('id= :taskId', {taskId})
+      .execute();
 
       if(result) {
         response.result = true;

@@ -1,4 +1,4 @@
-import { IsArray, IsDate, IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserRequestDto {
   @IsString()

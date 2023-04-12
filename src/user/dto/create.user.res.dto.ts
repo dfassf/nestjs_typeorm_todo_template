@@ -1,6 +1,6 @@
 import { IsBoolean, IsString } from 'class-validator';
 
-export class AddUserResponseDto {
+export class CreateUserResponseDto {
   @IsBoolean()
   result: boolean;
 

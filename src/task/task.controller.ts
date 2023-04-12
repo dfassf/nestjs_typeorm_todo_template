@@ -7,10 +7,8 @@ import {
     ParseIntPipe,
     Patch,
     Post,
-    Put,
   } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { UserService } from 'src/user/user.service';
 import { AddTaskRequestDto } from './dto/add.task.req.dto';
 import { GetTasksResponseDto } from './dto/get.tasks.res.dto';
 import { AddTaskResponseDto } from './dto/add.task.res.dto';
@@ -22,7 +20,6 @@ import { DeleteTaskResponseDto } from './dto/delete.task.res.dto';
 export class TaskController {
   constructor(
     private readonly taskService: TaskService,
-    private readonly userServie: UserService
     ) {}
 
   @Post('addTask')

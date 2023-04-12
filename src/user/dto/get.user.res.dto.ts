@@ -1,12 +1,12 @@
-import { IsArray, IsBoolean, IsDate, IsDateString, IsNumber, IsString } from 'class-validator';
-import { UserEntity } from '../entity/user';
+import { IsBoolean, IsObject, IsString } from 'class-validator';
+import { UserDto } from './user.dto';
 
 export class GetUserResponseDto {
   @IsBoolean()
   result: boolean;
 
-  @IsArray()
-  data: UserEntity;
+  @IsObject()
+  data: UserDto;
 
   @IsString()
   code: string;

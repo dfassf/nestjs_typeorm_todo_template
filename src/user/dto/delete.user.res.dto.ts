@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsDate, IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 export class DeleteUserResponseDto {
   @IsBoolean()
